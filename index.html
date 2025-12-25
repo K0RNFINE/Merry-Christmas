@@ -1,257 +1,224 @@
-<link rel="shortcut icon" href="logo2.png">
-<style>
-    #snowflakeContainer {
-      position: absolute;
-      left: 0px;
-      top: 0px;
-      display: none;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Merry Christmas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="shortcut icon" href="logo2.png" />
+
+  <style>
+    :root {
+      --bg-color: #050815;
+      --bg-grad-1: #0b1024;
+      --bg-grad-2: #10253b;
+      --accent: #ff4f6a;
+      --accent-soft: #ffd8e0;
+      --text-main: #ffffff;
+      --text-sub: #d0e4ff;
     }
-  
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: radial-gradient(circle at top, var(--bg-grad-1), var(--bg-grad-2))
+        fixed,
+        var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.5rem;
+      overflow-x: hidden;
+    }
+
+    .bg {
+      position: relative;
+      width: 100%;
+      max-width: 960px;
+      padding: clamp(1.8rem, 3vw, 2.8rem);
+      border-radius: 1.5rem;
+      background: rgba(5, 10, 30, 0.82);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+      z-index: 1;
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: clamp(1rem, 3vw, 1.8rem);
+    }
+
+    .logo img {
+      width: min(120px, 35vw);
+      height: auto;
+      border-radius: 999px;
+    }
+
+    .title-main {
+      font-size: clamp(2.1rem, 6vw, 3.4rem);
+      line-height: 1.05;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+      text-shadow: 0 0 18px rgba(255, 255, 255, 0.25),
+        0 0 32px rgba(255, 79, 106, 0.45);
+    }
+
+    .title-and {
+      font-size: clamp(1.2rem, 3.5vw, 1.8rem);
+      color: var(--accent-soft);
+      margin: 0.1rem 0;
+    }
+
+    .title-sub {
+      font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: clamp(1.3rem, 3vw, 1.8rem);
+      text-shadow: 0 0 14px rgba(255, 79, 106, 0.55);
+    }
+
+    .thai-text {
+      font-size: clamp(0.9rem, 2.4vw, 1.1rem);
+      color: var(--text-sub);
+      line-height: 1.6;
+      max-width: 40rem;
+      margin: 0 auto;
+    }
+
+    /* Snowflakes */
+    #snowflakeContainer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
     .snowflake {
       position: fixed;
-      background-color: #FFFFFF;
-      user-select: none;
-      z-index: 1000;
-      pointer-events: none;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      width: 10px;
-      height: 10px;
+      background-color: rgba(255, 255, 255, 0.95);
+      opacity: 0.3;
+    }
+
+    /* Ensure content always on top of snow */
+    .bg,
+    .logo,
+    .title-main,
+    .title-sub,
+    .thai-text {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Small devices tweaks */
+    @media (max-width: 480px) {
+      .bg {
+        padding: 1.4rem;
+        border-radius: 1.1rem;
+      }
+
+      .logo img {
+        width: 90px;
+      }
     }
   </style>
+</head>
+<body>
+  <div class="bg">
+    <div class="logo">
+      <img src="logo2.png" alt="Logo" />
+    </div>
+
+    <div class="title">
+      <h1 class="title-main">Merry Christmas</h1>
+      <div class="title-and">and</div>
+      <h2 class="title-sub">Happy New Year 2026(Incoming)</h2>
+    </div>
+  </div>
+
+  <!-- Snow container (only one, for JS to use) -->
   <div id="snowflakeContainer">
     <span class="snowflake"></span>
   </div>
-  
+
   <script>
-    // Array to store our Snowflake objects
-    let snowflakes = [];
-  
-    // Global variables to store our browser's window size
-    let browserWidth;
-    let browserHeight;
-  
-    // Specify the number of snowflakes you want visible
-    let numberOfSnowflakes = 50;
-  
-    // Flag to reset the position of the snowflakes
-    let resetPosition = false;
-  
-    // Handle accessibility
-    let enableAnimations = false;
-    let reduceMotionQuery = matchMedia("(prefers-reduced-motion)");
-  
-    // Handle animation accessibility preferences
-    function setAccessibilityState() {
-      if (reduceMotionQuery.matches) {
-        enableAnimations = false;
-      } else {
-        enableAnimations = true;
-      }
-    }
-    setAccessibilityState();
-  
-    reduceMotionQuery.addListener(setAccessibilityState);
-  
-    //
-    // It all starts here...
-    //
-    function setup() {
-      if (enableAnimations) {
-        window.addEventListener("DOMContentLoaded", generateSnowflakes, false);
-        window.addEventListener("resize", setResetFlag, false);
-      }
-    }
-    setup();
-  
-    //
-    // Constructor for our Snowflake object
-    //
-    class Snowflake {
-      constructor(element, speed, xPos, yPos) {
-        // set initial snowflake properties
-        this.element = element;
-        this.speed = speed;
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.scale = 1;
-  
-        // declare variables used for snowflake's motion
-        this.counter = 0;
-        this.sign = Math.random() < 0.5 ? 1 : -1;
-  
-        // setting an initial opacity and size for our snowflake
-        this.element.style.opacity = (0.1 + Math.random()) / 3;
-      }
-  
-      // The function responsible for actually moving our snowflake
-      update(delta) {
-        // using some trigonometry to determine our x and y position
-        this.counter += (this.speed / 5000) * delta;
-        this.xPos += (this.sign * delta * this.speed * Math.cos(this.counter)) / 40;
-        this.yPos += Math.sin(this.counter) / 40 + (this.speed * delta) / 30;
-        this.scale = 0.5 + Math.abs((10 * Math.cos(this.counter)) / 20);
-  
-        // setting our snowflake's position
-        setTransform(
-          Math.round(this.xPos),
-          Math.round(this.yPos),
-          this.scale,
-          this.element
-        );
-  
-        // if snowflake goes below the browser window, move it back to the top
-        if (this.yPos > browserHeight) {
-          this.yPos = -50;
-        }
-      }
-    }
-  
-    //
-    // A performant way to set your snowflake's position and size
-    //
-    function setTransform(xPos, yPos, scale, el) {
-      el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0) scale(${scale}, ${scale})`;
-    }
-  
-    //
-    // The function responsible for creating the snowflake
-    //
-    function generateSnowflakes() {
-      // get our snowflake element from the DOM and store it
-      let originalSnowflake = document.querySelector(".snowflake");
-  
-      // access our snowflake element's parent container
-      let snowflakeContainer = originalSnowflake.parentNode;
-      snowflakeContainer.style.display = "block";
-  
-      // get our browser's size
-      browserWidth = document.documentElement.clientWidth;
-      browserHeight = document.documentElement.clientHeight;
-  
-      // create each individual snowflake
+    const snowflakes = [];
+    const numberOfSnowflakes = 60;
+
+    let browserWidth = window.innerWidth;
+    let browserHeight = window.innerHeight;
+
+    function createSnowflakes() {
+      const container = document.getElementById("snowflakeContainer");
+      const template = container.querySelector(".snowflake");
+
       for (let i = 0; i < numberOfSnowflakes; i++) {
-        // clone our original snowflake and add it to snowflakeContainer
-        let snowflakeClone = originalSnowflake.cloneNode(true);
-        snowflakeContainer.appendChild(snowflakeClone);
-  
-        // set our snowflake's initial position and related properties
-        let initialXPos = getPosition(50, browserWidth);
-        let initialYPos = getPosition(50, browserHeight);
-        let speed = (5 + Math.random() * 40) * delta;
-  
-        // create our Snowflake object
-        let snowflakeObject = new Snowflake(
-          snowflakeClone,
-          speed,
-          initialXPos,
-          initialYPos
-        );
-        snowflakes.push(snowflakeObject);
+        const flake = template.cloneNode(true);
+        container.appendChild(flake);
+
+        const size = 4 + Math.random() * 8;
+        flake.style.width = size + "px";
+        flake.style.height = size + "px";
+        flake.style.opacity = 0.2 + Math.random() * 0.6;
+
+        snowflakes.push({
+          element: flake,
+          x: Math.random() * browserWidth,
+          y: Math.random() * browserHeight,
+          speedY: 0.4 + Math.random() * 1.6,
+          speedX: Math.random() * 0.6 - 0.3,
+        });
       }
-  
-      // remove the original snowflake because we no longer need it visible
-      snowflakeContainer.removeChild(originalSnowflake);
-  
-      requestAnimationFrame(moveSnowflakes);
+
+      // Remove template
+      template.remove();
+
+      requestAnimationFrame(updateSnowflakes);
     }
-  
-    //
-    // Responsible for moving each snowflake by calling its update function
-    //
-    let frames_per_second = 60;
-    let frame_interval = 1000 / frames_per_second;
-  
-    let previousTime = performance.now();
-    let delta = 1;
-  
-    function moveSnowflakes(currentTime) {
-      delta = (currentTime - previousTime) / frame_interval;
-  
-      if (enableAnimations) {
-        for (let i = 0; i < snowflakes.length; i++) {
-          let snowflake = snowflakes[i];
-          snowflake.update(delta);
+
+    function updateSnowflakes() {
+      for (const flake of snowflakes) {
+        flake.y += flake.speedY;
+        flake.x += flake.speedX;
+
+        // Wrap around screen
+        if (flake.y > browserHeight) {
+          flake.y = -10;
+          flake.x = Math.random() * browserWidth;
         }
+        if (flake.x > browserWidth) flake.x = 0;
+        if (flake.x < 0) flake.x = browserWidth;
+
+        flake.element.style.transform = `translate3d(${flake.x}px, ${flake.y}px, 0)`;
       }
-  
-      previousTime = currentTime;
-  
-      // Reset the position of all the snowflakes to a new value
-      if (resetPosition) {
-        browserWidth = document.documentElement.clientWidth;
-        browserHeight = document.documentElement.clientHeight;
-  
-        for (let i = 0; i < snowflakes.length; i++) {
-          let snowflake = snowflakes[i];
-  
-          snowflake.xPos = getPosition(50, browserWidth);
-          snowflake.yPos = getPosition(50, browserHeight);
-        }
-  
-        resetPosition = false;
-      }
-  
-      requestAnimationFrame(moveSnowflakes);
+
+      requestAnimationFrame(updateSnowflakes);
     }
-  
-    //
-    // This function returns a number between (maximum - offset) and (maximum + offset)
-    //
-    function getPosition(offset, size) {
-      return Math.round(-1 * offset + Math.random() * (size + 2 * offset));
-    }
-  
-    //
-    // Trigger a reset of all the snowflakes' positions
-    //
-    function setResetFlag(e) {
-      resetPosition = true;
-    }
+
+    window.addEventListener("resize", () => {
+      browserWidth = window.innerWidth;
+      browserHeight = window.innerHeight;
+    });
+
+    window.addEventListener("DOMContentLoaded", createSnowflakes);
   </script>
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-<head>
-    <title>Merry Christmas</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="javascript" href="main.js">
-</head>
-<body>
-
-
-
-    <div class="BG">
-        
-        <div class="logo">
-            <img src="logo2.png" class="logo">
-        </div>
-        <div class="title">
-            <h1>Merry Christmas<br></h1>
-            <div class="subtitle">
-                <h1>and<br></h1>
-            </div>
-            <h1>Happy NewYear 2025</h1>
-            <br><br>
-            <h1>พี่ชื่อ K0RN น้าลองไปหาในช่องสมาชิกใน line ดู(ช่องที่ไว้คุยกับรุ่นพรี่)</h1>
-        </div>
-
-
-
-
-        <div id="snowflakeContainer">
-            <img class="snowflake" src="https://www.kirupa.com/icon/2744.svg">
-        </div>
-
-    </div>
-    
-    <div class="title">
-
-    </div>
 </body>
-
+</html>
