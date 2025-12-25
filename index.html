@@ -7,218 +7,151 @@
   <link rel="shortcut icon" href="logo2.png" />
 
   <style>
-    :root {
-      --bg-color: #050815;
-      --bg-grad-1: #0b1024;
-      --bg-grad-2: #10253b;
-      --accent: #ff4f6a;
-      --accent-soft: #ffd8e0;
-      --text-main: #ffffff;
-      --text-sub: #d0e4ff;
-    }
-
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }
-
-    html,
-    body {
-      height: 100%;
+      box-sizing: border-box;
     }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: radial-gradient(circle at top, var(--bg-grad-1), var(--bg-grad-2))
-        fixed,
-        var(--bg-color);
-      color: var(--text-main);
+      overflow-x: hidden;
+      height: 100vh;
+      background: #000; /* will be covered by .BG */
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .BG {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background-image: url("BG.webp"); /* 👈 your background image */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 1.5rem;
-      overflow-x: hidden;
-    }
-
-    .bg {
-      position: relative;
-      width: 100%;
-      max-width: 960px;
-      padding: clamp(1.8rem, 3vw, 2.8rem);
-      border-radius: 1.5rem;
-      background: rgba(5, 10, 30, 0.82);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
-      z-index: 1;
+      padding: 1rem;
     }
 
     .logo {
-      display: flex;
-      justify-content: center;
-      margin-bottom: clamp(1rem, 3vw, 1.8rem);
+      position: absolute;
+      top: 20px;
+      left: 20px;
     }
 
     .logo img {
-      width: min(120px, 35vw);
+      width: clamp(70px, 10vw, 110px);
       height: auto;
-      border-radius: 999px;
     }
 
-    .title-main {
-      font-size: clamp(2.1rem, 6vw, 3.4rem);
-      line-height: 1.05;
+    .title {
+      margin-top: 2rem;
+    }
+
+    .title h1 {
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1.1;
       font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 0.2rem;
-      text-shadow: 0 0 18px rgba(255, 255, 255, 0.25),
-        0 0 32px rgba(255, 79, 106, 0.45);
+      text-shadow: 0 0 18px rgba(0, 0, 0, 0.7);
     }
 
-    .title-and {
-      font-size: clamp(1.2rem, 3.5vw, 1.8rem);
-      color: var(--accent-soft);
-      margin: 0.1rem 0;
-    }
-
-    .title-sub {
-      font-size: clamp(1.6rem, 4.5vw, 2.4rem);
-      font-weight: 700;
-      color: var(--accent);
-      margin-bottom: clamp(1.3rem, 3vw, 1.8rem);
-      text-shadow: 0 0 14px rgba(255, 79, 106, 0.55);
-    }
-
-    .thai-text {
-      font-size: clamp(0.9rem, 2.4vw, 1.1rem);
-      color: var(--text-sub);
-      line-height: 1.6;
-      max-width: 40rem;
-      margin: 0 auto;
-    }
-
-    /* Snowflakes */
+    /* Snow Container */
     #snowflakeContainer {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       pointer-events: none;
-      z-index: 0;
+      z-index: 999; /* snow in front of everything but non-clickable */
       overflow: hidden;
     }
 
     .snowflake {
-      position: fixed;
+      position: absolute;
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.95);
-      opacity: 0.3;
-    }
-
-    /* Ensure content always on top of snow */
-    .bg,
-    .logo,
-    .title-main,
-    .title-sub,
-    .thai-text {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Small devices tweaks */
-    @media (max-width: 480px) {
-      .bg {
-        padding: 1.4rem;
-        border-radius: 1.1rem;
-      }
-
-      .logo img {
-        width: 90px;
-      }
+      background-color: rgba(255, 255, 255, 0.9);
+      opacity: 0.6;
     }
   </style>
 </head>
 <body>
-  <div class="bg">
+  <div class="BG">
     <div class="logo">
-      <img src="logo2.png" alt="Logo" />
+      <img src="logo2.png" alt="Logo">
     </div>
 
     <div class="title">
-      <h1 class="title-main">Merry Christmas</h1>
-      <div class="title-and">and</div>
-      <h2 class="title-sub">Happy New Year 2026(Incoming)</h2>
+      <h1>Merry Christmas</h1>
+      <h1>and</h1>
+      <h1>Happy New Year 2025</h1>
     </div>
   </div>
 
-  <!-- Snow container (only one, for JS to use) -->
   <div id="snowflakeContainer">
     <span class="snowflake"></span>
   </div>
 
   <script>
     const snowflakes = [];
-    const numberOfSnowflakes = 60;
+    const count = 60;
+    let w = document.documentElement.clientWidth;
+    let h = document.documentElement.clientHeight;
 
-    let browserWidth = window.innerWidth;
-    let browserHeight = window.innerHeight;
-
-    function createSnowflakes() {
+    function createSnow() {
       const container = document.getElementById("snowflakeContainer");
       const template = container.querySelector(".snowflake");
 
-      for (let i = 0; i < numberOfSnowflakes; i++) {
+      for (let i = 0; i < count; i++) {
         const flake = template.cloneNode(true);
         container.appendChild(flake);
 
-        const size = 4 + Math.random() * 8;
-        flake.style.width = size + "px";
-        flake.style.height = size + "px";
-        flake.style.opacity = 0.2 + Math.random() * 0.6;
-
         snowflakes.push({
-          element: flake,
-          x: Math.random() * browserWidth,
-          y: Math.random() * browserHeight,
-          speedY: 0.4 + Math.random() * 1.6,
-          speedX: Math.random() * 0.6 - 0.3,
+          el: flake,
+          x: Math.random() * w,
+          y: Math.random() * h,
+          spdY: 0.6 + Math.random() * 1.4,
+          spdX: Math.random() * 0.5 - 0.25,
         });
       }
 
-      // Remove template
+      // remove template after cloning
       template.remove();
 
-      requestAnimationFrame(updateSnowflakes);
+      requestAnimationFrame(updateSnow);
     }
 
-    function updateSnowflakes() {
-      for (const flake of snowflakes) {
-        flake.y += flake.speedY;
-        flake.x += flake.speedX;
+    function updateSnow() {
+      for (const f of snowflakes) {
+        f.y += f.spdY;
+        f.x += f.spdX;
 
-        // Wrap around screen
-        if (flake.y > browserHeight) {
-          flake.y = -10;
-          flake.x = Math.random() * browserWidth;
+        if (f.y > h) {
+          f.y = -10;
+          f.x = Math.random() * w;
         }
-        if (flake.x > browserWidth) flake.x = 0;
-        if (flake.x < 0) flake.x = browserWidth;
+        if (f.x > w) f.x = 0;
+        if (f.x < 0) f.x = w;
 
-        flake.element.style.transform = `translate3d(${flake.x}px, ${flake.y}px, 0)`;
+        f.el.style.left = f.x + "px";
+        f.el.style.top = f.y + "px";
       }
 
-      requestAnimationFrame(updateSnowflakes);
+      requestAnimationFrame(updateSnow);
     }
 
     window.addEventListener("resize", () => {
-      browserWidth = window.innerWidth;
-      browserHeight = window.innerHeight;
+      w = document.documentElement.clientWidth;
+      h = document.documentElement.clientHeight;
     });
 
-    window.addEventListener("DOMContentLoaded", createSnowflakes);
+    window.addEventListener("DOMContentLoaded", createSnow);
   </script>
 </body>
 </html>
